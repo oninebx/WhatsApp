@@ -1,0 +1,1 @@
+This folder is to store images used in Project's README file.
