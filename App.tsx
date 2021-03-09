@@ -21,7 +21,7 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <Navigation />
-      <StatusBar />
+      <StatusBar translucent backgroundColor="transparent" />
     </SafeAreaProvider>
   );
 };
