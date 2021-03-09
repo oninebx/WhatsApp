@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import {
   StyleSheet,
@@ -8,8 +9,9 @@ import {
   LayoutChangeEvent,
   I18nManager,
   Platform,
+  Text,
 } from 'react-native';
-import Animated from 'react-native-reanimated';
+import Animated, {Extrapolate} from 'react-native-reanimated';
 import TabBarItem, {
   Props as TabBarItemProps,
 } from 'react-native-tab-view/src/TabBarItem';
@@ -77,6 +79,9 @@ const scheduleInNextFrame = (cb: () => void) => {
 
   return () => cancelAnimationFrame(frame);
 };
+
+// @ts-ignore
+const interpolate = Animated.interpolateNode || Animated.interpolate;
 
 export default class TabBar<T extends Route> extends React.Component<
   Props<T>,
@@ -323,6 +328,19 @@ export default class TabBar<T extends Route> extends React.Component<
       ),
   );
 
+  private getTranslateY = memoize(
+    (position: Animated.Node<number>, height: number) => {
+      const inputRange = [0, 1];
+      const outputRange = [-height, 0];
+
+      return interpolate(position, {
+        inputRange,
+        outputRange,
+        extrapolate: Extrapolate.CLAMP,
+      });
+    },
+  );
+
   render() {
     const {
       position,
@@ -361,11 +379,23 @@ export default class TabBar<T extends Route> extends React.Component<
       this.scrollAmount,
       this.getMaxScrollDistance(tabBarWidth, layout.width),
     );
+    const translateY = this.getTranslateY(position, layout.height);
 
     return (
       <Animated.View
         onLayout={this.handleLayout}
-        style={[styles.tabBar, style]}>
+        style={[
+          styles.tabBar,
+          style,
+          {
+            transform: [{translateY}],
+          },
+        ]}>
+        {/** define header here */}
+        <View style={{height: 48, top: 36}}>
+          <Text>Header here</Text>
+        </View>
+        {/** header end */}
         <Animated.View
           pointerEvents="none"
           style={[

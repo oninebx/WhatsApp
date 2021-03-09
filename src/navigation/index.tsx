@@ -27,7 +27,11 @@ function RootNavigator() {
           fontWeight: 'bold',
         },
       }}>
-      <Stack.Screen name="Root" component={MainTabNavigator} />
+      <Stack.Screen
+        name="Root"
+        component={MainTabNavigator}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 }

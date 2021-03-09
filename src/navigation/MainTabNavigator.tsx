@@ -6,6 +6,7 @@ import CameraScreen from '../screens/Camera';
 import ChatsScreen from '../screens/Chats';
 import StatusScreen from '../screens/Status';
 import CallsScreen from '../screens/Calls';
+import ExTopTabBar from '../components/ExTopTabBar';
 
 const MainTab = createMaterialTopTabNavigator<MainTabParamList>();
 
@@ -25,7 +26,8 @@ const MainTabNavigator = () => {
         labelStyle: {
           fontWeight: 'bold',
         },
-      }}>
+      }}
+      tabBar={(props) => <ExTopTabBar {...props} />}>
       <MainTab.Screen name="Camera" component={CameraScreen} />
       <MainTab.Screen name="Chats" component={ChatsScreen} />
       <MainTab.Screen name="Status" component={StatusScreen} />
