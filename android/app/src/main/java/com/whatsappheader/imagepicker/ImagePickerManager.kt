@@ -53,6 +53,7 @@ class ImagePickerManager : ViewGroupManager<FrameLayout> {
             else -> {}
         }
     }
+    
 
     private fun createFragment(parent: FrameLayout, holderId: Int){
         var parentView = parent.findViewById<FrameLayout>(holderId).parent as ViewGroup

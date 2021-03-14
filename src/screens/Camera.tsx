@@ -18,11 +18,14 @@ const requestCameraPermission = async () => {
       const granted = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.CAMERA,
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
       ]);
       if (
         granted[PermissionsAndroid.PERMISSIONS.CAMERA] ===
           PermissionsAndroid.RESULTS.GRANTED &&
         granted[PermissionsAndroid.PERMISSIONS.RECORD_AUDIO] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        granted[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] ===
           PermissionsAndroid.RESULTS.GRANTED
       ) {
         console.log('camera is allowed');

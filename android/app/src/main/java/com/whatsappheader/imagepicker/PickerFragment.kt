@@ -1,5 +1,8 @@
 package com.whatsappheader.imagepicker
 
+import android.content.res.Resources
+import android.database.Cursor
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 import com.otaliastudios.cameraview.CameraView
 import com.otaliastudios.cameraview.controls.Facing
 import com.whatsappheader.R
@@ -26,6 +30,10 @@ class PickerFragment : Fragment() {
     private var camera: CameraView? = null
     private var front: ImageView? = null
     private var options: Options? = null
+
+    // photo
+    private lateinit var instantPhotoList: RecyclerView
+    private var instantAdapter: InstantPhotoAdapter? = null
 
 
     // TODO: Rename and change types of parameters
@@ -63,6 +71,29 @@ class PickerFragment : Fragment() {
                 options?.setFacingFront(true)
             }
         }
+        // recyclerView
+        instantPhotoList = view.findViewById(R.id.picker_photo_instant_list)
+        instantPhotoList.addItemDecoration(object: RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                super.getItemOffsets(outRect, view, parent, state)
+                outRect.top = this@PickerFragment.resources.getDimensionPixelOffset(R.dimen.spacing_2)
+            }
+        })
+
+        this.context?.let {
+            instantAdapter = InstantPhotoAdapter(it)
+            instantAdapter!!.setData(PhotoProvider.getPhotoList(it, options?.mode))
+            instantPhotoList.adapter = instantAdapter
+        }
+
+
+
+
+    }
+
+    private fun loadPhotos(){
+        val instantPhotos: ArrayList<Photo> = ArrayList();
+
     }
 
     override fun onResume() {

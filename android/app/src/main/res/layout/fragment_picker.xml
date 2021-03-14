@@ -39,29 +39,25 @@
                 android:layout_marginLeft="-2px"
                 android:minHeight="194dp"
                 app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/picker_photo_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="-2px"
-                    android:layout_marginTop="56dp"
-                    android:background="#394a82"
-                    android:visibility="invisible"/>
-                <TextView
-                    android:id="@+id/picker_bubble"
-                    android:layout_width="140dp"
-                    android:layout_height="33dp"
-                    android:layout_gravity="end"
-                    android:layout_marginRight="52dp"
-                    android:layout_marginTop="64dp"
-                    android:background="@drawable/trigger"
-                    android:elevation="10dp"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:textSize="14sp"
-                    android:visibility="gone"
-                    tools:textColor="#000" />
 
+                <!-- instant photo list -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="82dp">
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/picker_pull_arrow"
+                        android:layout_width="20dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:background="@drawable/ic_arrow_up"/>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/picker_photo_instant_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="82dp"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        />
+                </FrameLayout>
             </FrameLayout>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

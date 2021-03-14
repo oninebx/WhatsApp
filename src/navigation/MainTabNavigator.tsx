@@ -13,8 +13,6 @@ const MainTab = createMaterialTopTabNavigator<MainTabParamList>();
 const MainTabNavigator = () => {
   return (
     <MainTab.Navigator
-      lazy={true}
-      lazyPreloadDistance={1}
       initialRouteName="Chats"
       tabBarOptions={{
         activeTintColor: '#fff',

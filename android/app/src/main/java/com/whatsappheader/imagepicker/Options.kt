@@ -13,8 +13,22 @@ import java.io.Serializable
  */
 class Options private constructor(): Serializable {
 
+    enum class Mode {
+        ALL,
+        PICTURE,
+        VIDEO
+    }
+
+    var mode = Mode.ALL
+    private set
+
     var isFacingFront = false
         private set
+
+    fun setMode(mode: Mode): Options {
+        this.mode = mode
+        return this
+    }
 
     fun setFacingFront(value: Boolean) : Options {
         isFacingFront = value

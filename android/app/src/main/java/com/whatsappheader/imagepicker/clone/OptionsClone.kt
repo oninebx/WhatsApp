@@ -1,4 +1,4 @@
-
+package com.whatsappheader.imagepicker.clone
 class OptionsClone {
 
 }
