@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.react.bridge.ReactContext
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.otaliastudios.cameraview.CameraView
 import com.otaliastudios.cameraview.controls.Facing
 import com.whatsappheader.R
@@ -27,13 +29,17 @@ private const val ARG_PARAM2 = "param2"
  */
 class PickerFragment : Fragment() {
 
+    // views
     private var camera: CameraView? = null
     private var front: ImageView? = null
+
     private var options: Options? = null
 
     // photo
     private lateinit var instantPhotoList: RecyclerView
     private var instantAdapter: InstantPhotoAdapter? = null
+    private lateinit var photoList: RecyclerView
+    private var photoAdapter: PhotoAdapter? = null
 
 
     // TODO: Rename and change types of parameters
@@ -79,22 +85,45 @@ class PickerFragment : Fragment() {
                 outRect.top = this@PickerFragment.resources.getDimensionPixelOffset(R.dimen.spacing_2)
             }
         })
+        photoList = view.findViewById(R.id.picker_photo_list)
+
 
         this.context?.let {
             instantAdapter = InstantPhotoAdapter(it)
-            instantAdapter!!.setData(PhotoProvider.getPhotoList(it, options?.mode))
+            var data = PhotoProvider.getPhotoList(it, options?.mode)
+            instantAdapter!!.setData(data)
             instantPhotoList.adapter = instantAdapter
+
+            photoAdapter = PhotoAdapter(it)
+            photoAdapter!!.addData(data)
+            photoList.adapter = photoAdapter
+
+            setupBottomSheet(view.findViewById<View>(R.id.picker_bottom_sheet))
         }
 
-
-
-
     }
 
-    private fun loadPhotos(){
-        val instantPhotos: ArrayList<Photo> = ArrayList();
+    private fun setupBottomSheet(bottomSheet: View) {
+        var behavior = BottomSheetBehavior.from(bottomSheet)
+        behavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback(){
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
 
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                photoList.alpha = slideOffset
+                instantPhotoList.alpha = 1 - slideOffset
+
+                if (slideOffset > 0 && photoList.visibility == View.INVISIBLE) {
+                    photoList.visibility = View.VISIBLE
+
+                } else if (photoList.visibility == View.VISIBLE && slideOffset == 0f) {
+                    photoList.visibility = View.INVISIBLE
+                }
+            }
+        })
     }
+
 
     override fun onResume() {
         super.onResume()

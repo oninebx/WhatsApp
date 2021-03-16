@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {RootStackParamList} from '../types';
 import MainTabNavigator from './MainTabNavigator';
+import Contacts from '../screens/Contacts';
 
 export default () => (
   <NavigationContainer>
@@ -31,6 +32,11 @@ function RootNavigator() {
         name="Root"
         component={MainTabNavigator}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Contacts"
+        component={Contacts}
+        options={{title: 'Contacts'}}
       />
     </Stack.Navigator>
   );

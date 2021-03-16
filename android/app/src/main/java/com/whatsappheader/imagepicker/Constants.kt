@@ -12,11 +12,11 @@ import android.provider.MediaStore
  */
 class Constants private constructor(){
     companion object{
-        var VIDEO_SELECTION = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+        const val VIDEO_SELECTION = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
-        var IMAGE_SELECTION = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+        const val IMAGE_SELECTION = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
-        var IMAGE_VIDEO_SELECTION = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+        const val IMAGE_VIDEO_SELECTION = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
                 + " OR "
                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
@@ -24,7 +24,7 @@ class Constants private constructor(){
 
         var IMAGE_VIDEO_URI = MediaStore.Files.getContentUri("external")
 
-        var IMAGE_VIDEO_PROJECTION = arrayOf(
+        val IMAGE_VIDEO_PROJECTION = arrayOf(
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.PARENT,
@@ -34,6 +34,8 @@ class Constants private constructor(){
                 MediaStore.Files.FileColumns.MEDIA_TYPE,
                 MediaStore.Files.FileColumns.MIME_TYPE,
                 MediaStore.Files.FileColumns.TITLE)
-        var IMAGE_VIDEO_ORDERBY = MediaStore.Images.Media.DATE_MODIFIED + " DESC"
+        const val IMAGE_VIDEO_ORDERBY = MediaStore.Images.Media.DATE_MODIFIED + " DESC"
+
+        var TAEGET_TAG: Int = -1
     }
 }

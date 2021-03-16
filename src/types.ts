@@ -1,5 +1,6 @@
 export type RootStackParamList = {
   Root: undefined;
+  Contacts: undefined;
 };
 
 export type MainTabParamList = {

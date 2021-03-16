@@ -4,27 +4,27 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/photo_preview"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="#DDDDDDDD"
+        android:id="@+id/instant_photo_preview"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_margin="4px"
+        android:background="#80000000"
         android:scaleType="centerCrop" />
 
     <ImageView
-        android:id="@+id/selection"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:id="@+id/instant_photo_selection"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:layout_gravity="center"
-        android:background="@drawable/bg_dark"
-        android:padding="16dp"
+        android:background="#30000000"
         android:src="@drawable/ic_check" />
 
     <ImageView
-        android:id="@+id/isVideo"
+        android:id="@+id/instant_photo_video_mark"
         android:layout_width="20dp"
         android:layout_height="15dp"
         android:layout_gravity="left|bottom"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/ic_video_mark" />
-
 </FrameLayout>

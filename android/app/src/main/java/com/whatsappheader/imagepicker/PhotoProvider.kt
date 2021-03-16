@@ -33,6 +33,7 @@ class PhotoProvider private constructor(){
                     val photo = Photo(cursor.getString(dataIndex), cursor.getInt(mediaTypeIndex))
                     result.add(photo)
                 }
+                cursor.close()
             }
             return result
         }

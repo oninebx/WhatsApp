@@ -25,6 +25,7 @@ class Options private constructor(): Serializable {
     var isFacingFront = false
         private set
 
+
     fun setMode(mode: Mode): Options {
         this.mode = mode
         return this

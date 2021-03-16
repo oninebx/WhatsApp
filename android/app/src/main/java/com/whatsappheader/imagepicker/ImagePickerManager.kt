@@ -44,16 +44,31 @@ class ImagePickerManager : ViewGroupManager<FrameLayout> {
         )
     }
 
+    override fun getExportedCustomBubblingEventTypeConstants(): MutableMap<String, Any> {
+        return MapBuilder.builder<String, Any>()
+                .put(
+                        "onPickFinished",
+                        MapBuilder.of(
+                                "phasedRegistrationNames",
+                                MapBuilder.of("bubbled", "onPickFinished")
+                        )
+                )
+                .build()
+    }
+
     override fun receiveCommand(root: FrameLayout, commandId: String?, args: ReadableArray?) {
         super.receiveCommand(root, commandId, args)
         var holderId = args?.getInt(0)
         var commandValue = commandId?.toInt()
+        holderId?.let {
+            Constants.TAEGET_TAG = holderId
+        }
         when(commandValue){
             COMMAND_CREATE -> holderId?.let { createFragment(root, holderId) }
             else -> {}
         }
     }
-    
+
 
     private fun createFragment(parent: FrameLayout, holderId: Int){
         var parentView = parent.findViewById<FrameLayout>(holderId).parent as ViewGroup

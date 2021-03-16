@@ -11,7 +11,14 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.react.ReactActivity
+import com.facebook.react.ReactApplication
+import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.bridge.WritableNativeMap
+import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.whatsappheader.R
+import kotlin.reflect.typeOf
 
 /*
  * <pre>
@@ -40,7 +47,7 @@ class InstantPhotoAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_photo, parent, false)
+        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_instant_photo, parent, false)
         return Holder(view)
     }
 
@@ -60,12 +67,34 @@ class InstantPhotoAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
         return data.size
     }
 
-    inner class Holder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class Holder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val preview: ImageView
 
         init {
-            preview = itemView.findViewById(R.id.photo_preview)
+            preview = itemView.findViewById(R.id.instant_photo_preview)
+            itemView.setOnClickListener(this)
         }
+
+        override fun onClick(v: View?) {
+            v?.let {
+                val params = WritableNativeMap()
+                params.putString("image", data[0].uri)
+
+                ((v.context as ReactActivity).applicationContext as ReactApplication)
+                        .reactNativeHost
+                        .reactInstanceManager
+                        .currentReactContext?.let {
+                            it.getJSModule(RCTEventEmitter::class.java)
+                                .receiveEvent(
+                                        Constants.TAEGET_TAG,
+                                        "onPickFinished",
+                                        params
+                                )
+                        }
+
+            }
+        }
+
     }
 
 }
