@@ -12,7 +12,7 @@
         android:scaleType="centerCrop" />
 
     <ImageView
-        android:id="@+id/instant_photo_selection"
+        android:id="@+id/instant_photo_select_mark"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_gravity="center"

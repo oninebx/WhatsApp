@@ -9,5 +9,5 @@ package com.whatsappheader.imagepicker
  * </pre>
  */
 data class Photo(val uri: String, val type: Int){
-    
+    var isSelected: Boolean = false
 }

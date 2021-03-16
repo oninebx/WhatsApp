@@ -55,11 +55,15 @@ class InstantPhotoAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
         val photo: Photo = data[position]
         val imageHolder = holder as Holder
         when(photo.type){
-            1 -> { glide.load(photo.uri).apply(options).into(holder.preview) }
+            1 -> {
+                glide.load(photo.uri).apply(options).into(holder.preview)
+                holder.videoMark.visibility = View.GONE
+            }
             else -> {
 
             }
         }
+        holder.selectMark.visibility = if(photo.isSelected) View.VISIBLE else View.GONE
 
     }
 
@@ -68,10 +72,15 @@ class InstantPhotoAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
     }
 
     inner class Holder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val preview: ImageView
+        internal val preview: ImageView
+        internal val videoMark: ImageView
+        internal val selectMark: ImageView
+
 
         init {
             preview = itemView.findViewById(R.id.instant_photo_preview)
+            videoMark = itemView.findViewById(R.id.instant_photo_video_mark)
+            selectMark = itemView.findViewById(R.id.instant_photo_select_mark)
             itemView.setOnClickListener(this)
         }
 

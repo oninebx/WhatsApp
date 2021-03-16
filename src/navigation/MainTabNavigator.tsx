@@ -7,6 +7,7 @@ import ChatsScreen from '../screens/Chats';
 import StatusScreen from '../screens/Status';
 import CallsScreen from '../screens/Calls';
 import ExTopTabBar from '../components/ExTopTabBar';
+import ExPager from '../components/ExPager';
 
 const MainTab = createMaterialTopTabNavigator<MainTabParamList>();
 
@@ -27,7 +28,8 @@ const MainTabNavigator = () => {
           fontWeight: 'bold',
         },
       }}
-      tabBar={(props) => <ExTopTabBar {...props} />}>
+      tabBar={(props) => <ExTopTabBar {...props} />}
+      pager={(props) => <ExPager {...props} />}>
       <MainTab.Screen name="Camera" component={CameraScreen} />
       <MainTab.Screen name="Chats" component={ChatsScreen} />
       <MainTab.Screen name="Status" component={StatusScreen} />

@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.react.bridge.ReactContext
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -98,12 +100,18 @@ class PickerFragment : Fragment() {
             photoAdapter!!.addData(data)
             photoList.adapter = photoAdapter
 
-            setupBottomSheet(view.findViewById<View>(R.id.picker_bottom_sheet))
+            var bottomContainer: View = view.findViewById(R.id.picker_bottom_buttons_container)
+            setupBottomSheet(view.findViewById<View>(R.id.picker_bottom_sheet), bottomContainer)
         }
 
     }
 
-    private fun setupBottomSheet(bottomSheet: View) {
+    private fun setupBottomSheet(bottomSheet: View, bottomContainer: View) {
+
+        var arrow = bottomSheet.findViewById<ImageView>(R.id.picker_pull_arrow)
+        var topBar:View = bottomSheet.findViewById(R.id.picker_top_bar)
+
+
         var behavior = BottomSheetBehavior.from(bottomSheet)
         behavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback(){
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -112,13 +120,28 @@ class PickerFragment : Fragment() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 photoList.alpha = slideOffset
+                topBar.alpha = slideOffset
                 instantPhotoList.alpha = 1 - slideOffset
+                arrow.alpha = 1 - slideOffset
+                bottomContainer.alpha = 1 - slideOffset
+
+                if(slideOffset == 1.0f && instantPhotoList.isVisible){
+                    instantPhotoList.visibility = View.GONE
+                    arrow.visibility = View.GONE
+                    bottomContainer.visibility = View.GONE
+                }else if(instantPhotoList.isGone && slideOffset < 1.0f) {
+                    instantPhotoList.visibility = View.VISIBLE
+                    arrow.visibility = View.VISIBLE
+                    bottomContainer.visibility = View.VISIBLE
+                }
 
                 if (slideOffset > 0 && photoList.visibility == View.INVISIBLE) {
                     photoList.visibility = View.VISIBLE
+                    topBar.visibility = View.VISIBLE
 
                 } else if (photoList.visibility == View.VISIBLE && slideOffset == 0f) {
                     photoList.visibility = View.INVISIBLE
+                    topBar.visibility = View.GONE
                 }
             }
         })

@@ -47,11 +47,15 @@ class PhotoAdapter(context: Context): RecyclerView.Adapter<RecyclerView.ViewHold
         Log.e("PhotoAdapter", "load position ---> " + data[position])
         if(holder is Holder) {
             when(photo.type){
-                1 -> {glide.load(photo.uri).apply(options).into(holder.preview)}
+                1 -> {
+                    glide.load(photo.uri).apply(options).into(holder.preview)
+                    holder.videoMark.visibility = View.GONE
+                }
                 else -> {
 
                 }
             }
+            holder.selectMark.visibility = if(photo.isSelected) View.VISIBLE else View.GONE
 
         }
     }
@@ -66,9 +70,15 @@ class PhotoAdapter(context: Context): RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     inner class Holder internal constructor(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val preview: ImageView
+        internal val preview: ImageView
+        internal val videoMark: ImageView
+        internal val selectMark: ImageView
+
+
         init {
             preview = itemView.findViewById(R.id.photo_preview)
+            videoMark = itemView.findViewById(R.id.photo_video_mark)
+            selectMark = itemView.findViewById(R.id.photo_select_mark)
         }
     }
 }
