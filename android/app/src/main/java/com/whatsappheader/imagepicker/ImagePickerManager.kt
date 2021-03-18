@@ -1,5 +1,6 @@
 package com.whatsappheader.imagepicker
 
+import android.util.Log
 import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.otaliastudios.cameraview.CameraView
+import com.whatsappheader.R
 
 /*
  * <pre>
@@ -26,6 +29,8 @@ class ImagePickerManager : ViewGroupManager<FrameLayout> {
     companion object {
         private val NAME = "ImagePicker"
         const val COMMAND_CREATE = 1
+        const val COMMAND_OPEN_CAMERA = 2
+        const val COMMAND_CLOSE_CAMERA = 3
     }
 
     constructor(context: ReactApplicationContext) {
@@ -40,7 +45,9 @@ class ImagePickerManager : ViewGroupManager<FrameLayout> {
 
     override fun getCommandsMap(): MutableMap<String, Int> {
         return MapBuilder.of(
-                "create", COMMAND_CREATE
+                "create", COMMAND_CREATE,
+                "open", COMMAND_OPEN_CAMERA,
+                "close", COMMAND_CLOSE_CAMERA,
         )
     }
 
@@ -63,8 +70,19 @@ class ImagePickerManager : ViewGroupManager<FrameLayout> {
         holderId?.let {
             Constants.TAEGET_TAG = holderId
         }
+        Log.i("ImagePickerManager", "receive command:" + commandId);
         when(commandValue){
             COMMAND_CREATE -> holderId?.let { createFragment(root, holderId) }
+            COMMAND_OPEN_CAMERA -> {
+                var cameraV = root.findViewById<CameraView>(R.id.picker_camera)
+                cameraV.visibility = View.VISIBLE
+                cameraV.open()
+            }
+            COMMAND_CLOSE_CAMERA -> {
+                var cameraV = root.findViewById<CameraView>(R.id.picker_camera)
+                cameraV.close()
+                cameraV.visibility = View.GONE
+            }
             else -> {}
         }
     }

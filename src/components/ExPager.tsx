@@ -89,7 +89,11 @@ const {
   timing,
 } = Animated;
 
-const PagerContext = React.createContext({});
+export const PagerContext = React.createContext<PagerContextOptions | {}>({});
+export type PagerContextOptions = {
+  addGestureHandlerRef: (ref: React.RefObject<PanGestureHandler>) => void;
+  addListener: (type: 'enter' | 'leave', listener: Listener) => void;
+};
 
 const TRUE = 1;
 const FALSE = 0;
@@ -264,6 +268,16 @@ export default class Pager<T extends Route> extends React.Component<
         }));
       }
     },
+    addListener: (type: 'enter' | 'leave', listener: Listener) => {
+      switch (type) {
+        case 'enter':
+          this.enterListeners.push(listener);
+          break;
+        case 'leave':
+          this.leaveListeners.push(listener);
+          break;
+      }
+    },
   };
 
   // PanGestureHandler ref used for coordination with parent handlers
@@ -297,6 +311,7 @@ export default class Pager<T extends Route> extends React.Component<
 
   // Scene that was last entered
   private lastEnteredIndex = new Value(this.props.navigationState.index);
+  private lastLeftIndex = new Value(this.props.navigationState.index);
 
   // Whether the user is currently dragging the screen
   private isSwiping: Animated.Value<Binary> = new Value(FALSE);
@@ -402,6 +417,7 @@ export default class Pager<T extends Route> extends React.Component<
 
   // Listeners for the entered screen
   private enterListeners: Listener[] = [];
+  private leaveListeners: Listener[] = [];
 
   // InteractionHandle to handle tasks around animations
   private interactionHandle: number | null = null;
@@ -458,12 +474,23 @@ export default class Pager<T extends Route> extends React.Component<
   };
 
   private handleEnteredIndexChange = ([value]: readonly number[]) => {
+    console.log('enter ' + value + ' screen');
     const index = Math.max(
       0,
       Math.min(value, this.props.navigationState.routes.length - 1),
     );
 
     this.enterListeners.forEach((listener) => listener(index));
+  };
+
+  // Ryan: Leave event
+  private handleLeftIndexChange = ([value]: readonly number[]) => {
+    console.log('leave ' + value + ' screen');
+    const index = Math.max(
+      0,
+      Math.min(value, this.props.navigationState.routes.length - 1),
+    );
+    this.leaveListeners.forEach((listener) => listener(index));
   };
 
   private transitionTo = (index: Animated.Node<number>) => {
@@ -567,6 +594,10 @@ export default class Pager<T extends Route> extends React.Component<
     ),
   ]);
 
+  private printValues = ([value]: readonly number[]) => {
+    console.log(value);
+  };
+
   private translateX = block([
     onChange(
       this.gesturesEnabled,
@@ -603,15 +634,78 @@ export default class Pager<T extends Route> extends React.Component<
         I18nManager.isRTL
           ? lessThan(this.gestureX, 0)
           : greaterThan(this.gestureX, 0),
-        // Based on the direction of the gesture, determine if we're entering the previous or next screen
-        cond(neq(floor(this.position), this.lastEnteredIndex), [
-          set(this.lastEnteredIndex, floor(this.position)),
-          call([floor(this.position)], this.handleEnteredIndexChange),
-        ]),
-        cond(neq(ceil(this.position), this.lastEnteredIndex), [
-          set(this.lastEnteredIndex, ceil(this.position)),
-          call([ceil(this.position)], this.handleEnteredIndexChange),
-        ]),
+        // Based on the direction of the gesture, determine if we're entering or leaving the previous or next screen
+        [
+          // slide to left
+          // detect entering secondary screen while position decreasing
+          cond(
+            greaterThan(sub(this.lastEnteredIndex, this.position), 0.1),
+            [
+              set(this.lastLeftIndex, this.lastEnteredIndex),
+              set(this.lastEnteredIndex, floor(this.position)),
+              call([this.lastEnteredIndex], this.handleEnteredIndexChange),
+            ],
+            [
+              // detect leaving secondary screen if having entered it
+              cond(
+                and(
+                  neq(this.lastEnteredIndex, this.lastLeftIndex),
+                  lessThan(sub(this.lastLeftIndex, this.position), 0.1),
+                ),
+                [
+                  call([this.lastEnteredIndex], this.handleLeftIndexChange),
+                  set(this.lastEnteredIndex, this.lastLeftIndex),
+                ],
+              ),
+            ],
+          ),
+          // detect leaving primary screen while pisition decreasing
+          cond(
+            lessThan(sub(this.position, this.lastEnteredIndex), 0.1),
+            [
+              // difference is less than the threshold, fire leaving primary screen event
+              cond(neq(this.lastLeftIndex, this.lastEnteredIndex), [
+                call([this.lastLeftIndex], this.handleLeftIndexChange),
+                set(this.lastLeftIndex, this.lastEnteredIndex),
+              ]),
+            ],
+            [],
+          ),
+          // call([this.position], this.printValues),
+        ],
+        [
+          // slide to right
+          // detect entering primary screen while position increasing
+          cond(
+            greaterThan(sub(this.position, this.lastEnteredIndex), 0.1),
+            [
+              set(this.lastLeftIndex, this.lastEnteredIndex),
+              set(this.lastEnteredIndex, ceil(this.position)),
+              call([this.lastEnteredIndex], this.handleEnteredIndexChange),
+            ],
+            [
+              // detect leaving secondary screen if having entered it
+              cond(
+                and(
+                  neq(this.lastEnteredIndex, this.lastLeftIndex),
+                  lessThan(sub(this.position, this.lastLeftIndex), 0.1),
+                ),
+                [
+                  call([this.lastEnteredIndex], this.handleLeftIndexChange),
+                  set(this.lastEnteredIndex, this.lastLeftIndex),
+                ],
+              ),
+            ],
+          ),
+          // detect leaving primay screen while position increasing
+          cond(lessThan(sub(this.lastEnteredIndex, this.position), 0.1), [
+            // difference is less than the threshold, fire leaving event
+            cond(neq(this.lastLeftIndex, this.lastEnteredIndex), [
+              call([this.lastLeftIndex], this.handleLeftIndexChange),
+              set(this.lastLeftIndex, this.lastEnteredIndex),
+            ]),
+          ]),
+        ],
       ),
     ),
     onChange(
@@ -780,7 +874,6 @@ export default class Pager<T extends Route> extends React.Component<
       removeClippedSubviews,
       gestureHandlerProps,
     } = this.props;
-
     const translateX = this.getTranslateX(
       this.layoutWidth,
       this.routesLength,

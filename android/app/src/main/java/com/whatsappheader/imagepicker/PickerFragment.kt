@@ -150,13 +150,13 @@ class PickerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        camera?.open()
+//        camera?.open()
         Log.i("PickerFragment", "onResume");
     }
 
     override fun onPause() {
         super.onPause()
-        camera?.close()
+//        camera?.close()
         Log.i("PickerFragment", "onPause");
     }
 

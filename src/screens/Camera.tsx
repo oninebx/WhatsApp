@@ -7,6 +7,7 @@ import {
   UIManager,
   PermissionsAndroid,
 } from 'react-native';
+import {PagerContext, PagerContextOptions} from '../components/ExPager';
 import {RootStackParamList} from '../types';
 
 interface Props {
@@ -52,12 +53,30 @@ class Camera extends React.Component<Props> {
     this.props.navigation.navigate('Contacts');
   };
 
-  create = () => {
+  private create = () => {
     const containerId = findNodeHandle(this.holder);
     console.log('dispatch command with ' + containerId);
     UIManager.dispatchViewManagerCommand(
       containerId,
       UIManager.getViewManagerConfig('ImagePicker').Commands.create.toString(),
+      [containerId],
+    );
+  };
+
+  private openCamera = () => {
+    const containerId = findNodeHandle(this.holder);
+    UIManager.dispatchViewManagerCommand(
+      containerId,
+      UIManager.getViewManagerConfig('ImagePicker').Commands.open.toString(),
+      [containerId],
+    );
+  };
+
+  private closeCamera = () => {
+    const containerId = findNodeHandle(this.holder);
+    UIManager.dispatchViewManagerCommand(
+      containerId,
+      UIManager.getViewManagerConfig('ImagePicker').Commands.close.toString(),
       [containerId],
     );
   };
@@ -69,12 +88,34 @@ class Camera extends React.Component<Props> {
 
   render() {
     return requestCameraPermission() ? (
-      <Picker
-        ref={(r) => (this.holder = r)}
-        style={this.props.style}
-        onPickFinished={this.onPickFinished}
-        {...this.props}
-      />
+      <PagerContext.Consumer>
+        {(context) => {
+          console.log(context);
+          const pContext = context as PagerContextOptions;
+          pContext.addListener('enter', (value: number) => {
+            if (value === 0) {
+              this.openCamera();
+            }
+          });
+          pContext.addListener('leave', (value: number) => {
+            if (value === 0) {
+              this.closeCamera();
+            }
+          });
+
+          return (
+            <Picker
+              ref={(r) => (this.holder = r)}
+              style={this.props.style}
+              onPickFinished={this.onPickFinished}
+              {...this.props}
+            />
+            // <View>
+            //   <Text>Camera</Text>
+            // </View>
+          );
+        }}
+      </PagerContext.Consumer>
     ) : (
       <View>
         <Text>Permission failed</Text>
